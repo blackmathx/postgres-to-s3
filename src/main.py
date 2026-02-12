@@ -22,10 +22,6 @@ def run():
     load_date = "load_date=2026-02-02"
 
 
-
- 
-
-
 ##### album
     raw_df = extract_album(engine)
     clean_df = gen_transform(raw_df, "album_id")
@@ -38,8 +34,6 @@ def run():
     s3_key = f"raw/artist/{load_date}/artist.parquet"
     load(clean_df, S3_BUCKET, s3_key)
     
-   
-
 ##### customer
     raw_df = extract_customer(engine) 
     clean_df = transform_customer(raw_df)
@@ -62,13 +56,11 @@ def run():
     for year in range(2020, 2028):
         raw_df = extract_invoice(engine, year)
         if raw_df.empty:
-            break
+            continue
         clean_df = transform_invoice(raw_df)
         s3_key = f"raw/invoice/{load_date}/{year}_invoice.parquet"
         load(clean_df, S3_BUCKET, s3_key)
     
-
-
 
 ##### invoice_line - count 2240
     table_name = "invoice_line"
@@ -90,13 +82,11 @@ def run():
         load(clean_df, S3_BUCKET, s3_key)
         
 
-
 ##### media_type
     raw_df = extract_media_type(engine) 
     clean_df = transform_media_type(raw_df)
     s3_key = f"raw/media_type/{load_date}/media_type.parquet"
     load(clean_df, S3_BUCKET, s3_key)
-
 
 ##### playlist_track - count 8715
     batch_size = 1000
@@ -134,7 +124,6 @@ def run():
         clean_df = transform_track(raw_df)
         s3_key = f"raw/track/{load_date}/part_{last_seen_id}_track.parquet"
         load(clean_df, S3_BUCKET, s3_key)
-
 
 
     engine.dispose()
