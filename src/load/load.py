@@ -16,7 +16,8 @@ def load(df: pd.DataFrame, bucket: str, key: str) -> None:
     if df.empty:
         print("Nothing to upload — DataFrame is empty. " + key)
         return
-
+   
+ 
     s3 = boto3.client("s3")
     
 

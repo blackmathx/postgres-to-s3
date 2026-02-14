@@ -1,12 +1,7 @@
 from sqlalchemy import create_engine
 import unittest
 import os, sys 
-
-
-# order matters and is needed to import from src folder
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))  
-
-
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))  # order matters. needed to import from src folder
 from config.env_reader import EnvReader
 from extract import extract_genre
 from transform import gen_transform

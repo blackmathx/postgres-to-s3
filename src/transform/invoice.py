@@ -3,9 +3,7 @@
 import pandas as pd
 
 def transform(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clean and enrich raw invoice data. Returns a transformed DataFrame.
-    """
+   
 
     if df.empty:
         return df
