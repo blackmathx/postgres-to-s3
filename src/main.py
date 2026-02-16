@@ -8,6 +8,7 @@ from transform import *
 from load.load import load
 from utils import set_last_update 
 from utils import fetch_last_update
+from utils import gen_file_id
 
 
 
@@ -34,8 +35,6 @@ def run():
     tables_no_id = ["playlist_track"]
 
 
-
-
     for table in tables:
         updated_at = datetime.now(timezone.utc)
         last_ingest = fetch_last_update(engine, table)
@@ -51,13 +50,11 @@ def run():
             last_seen_id = raw_df[id_column].iloc[-1]
             clean_df = gen_transform(raw_df, table + "_id") 
 
-            ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-            rand = uuid.uuid4().hex[:8]
-            file_id = f"{ts}_{rand}"
+            file_id = gen_file_id()
             
-            s3_key = f"raw/{load_date}/{table}/{table}_{file_id}.parquet"
+            s3_key = f"raw/{table}/{load_date}/{table}_{file_id}.parquet"
             load(clean_df, S3_BUCKET, s3_key)
-        set_last_update(engine, table, updated_at, True)
+        set_last_update(engine, table, updated_at)
     
 
 
@@ -77,15 +74,13 @@ def run():
             if raw_df.empty:
                 break
 
-            ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
-            rand = uuid.uuid4().hex[:8]
-            file_id = f"{ts}_{rand}"
 
+            file_id = gen_file_id()
 
-            s3_key = f"raw/{load_date}/{table}/{table}_{file_id}.parquet"
+            s3_key = f"raw/{table}/{load_date}/{table}_{file_id}.parquet"
             load(raw_df, S3_BUCKET, s3_key)
             offset += batch_size 
-        set_last_update(engine, table, updated_at, True)
+        set_last_update(engine, table, updated_at)
     
     engine.dispose()
 
